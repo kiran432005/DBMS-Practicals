@@ -1,0 +1,71 @@
+Create a collection named books having the following fields: 
+TITLE, DESCRIPTION, AUTHOR, URL, TAGS, and LIKES. 
+Implement the following Aggregation and Indexing Queries: 
+1. Find the number of books published by author john. 
+2. Find books which have minimum and maximum likes published by author john. 
+3. Find the average number of likes of the books published by author john. 
+4. Find the first and last book published by author john. 
+5. Create an index on author name. Display the books published by john and check if it uses the 
+created index. 
+    
+Create Collection 
+db.createCollection("books") 
+    
+ 
+db.books.insertMany([ 
+{ TITLE: "MONGO DB OVERVIEW", DESCRIPTION: "MongoDB basics", AUTHOR: "john", URL: 
+"www.mongodb.com", TAGS: ["database", "nosql"], LIKES: 50 }, 
+{ TITLE: "NOSQL", DESCRIPTION: "Non-relational databases", AUTHOR: "john", URL: "www.nosql.org", 
+TAGS: ["database"], LIKES: 100 }, 
+{ TITLE: "REACTJS", DESCRIPTION: "Frontend Library", AUTHOR: "susan", URL: "www.reactjs.org", 
+TAGS: ["frontend"], LIKES: 180 }, 
+{ TITLE: "NODEJS", DESCRIPTION: "Backend scripting", AUTHOR: "peter", URL: "www.nodejs.org", 
+TAGS: ["backend"], LIKES: 220 }, 
+{ TITLE: "EXPRESSJS", DESCRIPTION: "Web framework", AUTHOR: "mary", URL: "www.expressjs.com", 
+TAGS: ["web", "framework"], LIKES: 120 } 
+]) 
+
+
+ 
+db.books.aggregate([ 
+{ $match: { AUTHOR: "john" } }, 
+{ $group: { _id: "$AUTHOR", no_of_documents: { $sum: 1 } } } 
+]) 
+
+
+ 
+db.books.aggregate([ 
+{ $match: { AUTHOR: "john" } }, 
+{ $group: { _id: "$AUTHOR", minimum_likes: { $min: "$LIKES" } } } 
+])  
+db.books.aggregate([ 
+{ $match: { AUTHOR: "john" } }, 
+{ $group: { _id: "$AUTHOR", maximum_likes: { $max: "$LIKES" } } } 
+]) 
+
+
+
+
+db.books.aggregate([ 
+{ $match: { AUTHOR: "john" } }, 
+{ $group: { _id: "$AUTHOR", avg_likes: { $avg: "$LIKES" } } } 
+]) 
+
+
+ 
+
+db.books.aggregate([ 
+{ $match: { AUTHOR: "john" } }, 
+{ $group: { _id: "$AUTHOR", first_book: { $first: "$TITLE" } } } 
+])  
+db.books.aggregate([ 
+{ $match: { AUTHOR: "john" } }, 
+{ $group: { _id: "$AUTHOR", last_book: { $last: "$TITLE" } } } 
+]) 
+
+
+
+ 
+db.books.createIndex({ "AUTHOR": 1 }) 
+  
+db.books.find({ AUTHOR: "john" }).explain("executionStats")
